@@ -102,6 +102,8 @@
         id="product"
         class="form-select rounded-0"
         [(ngModel)]="selectedProductId"
+        [ngModelOptions]="{standalone:true}"
+
       >
         <option value="0" disabled selected>Select Product</option>
         @for(product of products;track product.id){
@@ -119,6 +121,8 @@
         type="number"
         class="form-control rounded-0"
         [(ngModel)]="currentQuantity"
+        [ngModelOptions]="{standalone:true}"
+
         min="1"
       />
     </div>
@@ -130,6 +134,7 @@
         type="number"
         class="form-control rounded-0"
         [(ngModel)]="currentPricePerItem"
+        [ngModelOptions]="{standalone:true}"
         min="0"
       />
     </div>
