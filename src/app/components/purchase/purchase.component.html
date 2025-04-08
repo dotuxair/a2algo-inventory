@@ -1,0 +1,202 @@
+<div class="container mt-3">
+  @if(viewDetail){
+  <div class="d-flex justify-content-between">
+    <h5 style="font-family: Trebuchet MS">Purchase Detail By Products</h5>
+    <button class="btn btn-primary btn-sm rounded-0" (click)="onHideDetail()">
+      Go Back
+    </button>
+  </div>
+  <hr />
+  <div class="d-flex justify-content-between">
+<span>Supplier Name : {{purchaseDetailsById?.supplierName}}</span>
+<span>Date : {{purchaseDetailsById?.date | date:'medium'}}</span>
+<span>Amount : {{purchaseDetailsById?.amount}}</span>
+  </div>
+  <br>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Product Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of productDetailByPurchaseId; track product.name ) {
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>Rs :- {{ product.price }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.quantity * product.price }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }@else {
+  <div class="d-flex justify-content-between">
+    <h5 style="font-family: Trebuchet MS">Product Purchase</h5>
+    <button
+      class="btn btn-primary btn-sm rounded-0"
+      (click)="openAddPurchaseControl()"
+    >
+      Add Purchase
+    </button>
+  </div>
+  <hr />
+  @if(!addPurchase){
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Supplier Name</th>
+          <th>Purchase Date</th>
+          <th>Total Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (purchase of purchases; track purchase.id ) {
+        <tr>
+          <td>{{ purchase.supplierName }}</td>
+          <td>{{ purchase.purchaseDate | date : "medium" }}</td>
+          <td>Rs :- {{ purchase.totalAmount }}</td>
+          <td>
+            <button
+              type="button"
+              (click)="viewPurchaseProducts(purchase.id)"
+              class="btn btn-primary btn-sm rounded-0"
+            >
+              View Detail
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }@else{
+  <form [formGroup]="purchaseForm" (ngSubmit)="onCreatePurchase()" class="row">
+    <div class="mb-3 col-md-3">
+      <label for="supplierName" class="form-label">Supplier Name</label>
+      <input
+        id="supplierName"
+        formControlName="supplierName"
+        type="text"
+        class="form-control rounded-0"
+        placeholder="e.g Habib Goods"
+      />
+      @if(purchaseForm.get('supplierName')?.invalid &&
+      purchaseForm.get('supplierName')?.touched){
+      <small class="text-danger"> Supplier Name is required. </small>
+      }
+    </div>
+
+    <div class="mb-3 col-md-3">
+      <label for="product" class="form-label">Choose Product</label>
+      <select
+        id="product"
+        class="form-select rounded-0"
+        [(ngModel)]="selectedProductId"
+      >
+        <option value="0" disabled selected>Select Product</option>
+        @for(product of products;track product.id){
+        <option [value]="product.id">
+          {{ `${product.name}  -  ${product.quantity}` }}
+        </option>
+        }
+      </select>
+    </div>
+
+    <div class="mb-3 col-md-2">
+      <label for="quantity" class="form-label">Quantity</label>
+      <input
+        id="quantity"
+        type="number"
+        class="form-control rounded-0"
+        [(ngModel)]="currentQuantity"
+        min="1"
+      />
+    </div>
+
+    <div class="mb-3 col-md-2">
+      <label for="pricePerItem" class="form-label">Price (per Item)</label>
+      <input
+        id="pricePerItem"
+        type="number"
+        class="form-control rounded-0"
+        [(ngModel)]="currentPricePerItem"
+        min="0"
+      />
+    </div>
+
+    <div class="mb-3 col-md-2 d-flex align-items-end justify-content-end">
+      <button
+        type="button"
+        (click)="addProductToList()"
+        class="btn btn-primary rounded-0"
+        [disabled]="
+          !selectedProductId ||
+          !currentQuantity ||
+          currentQuantity < 1 ||
+          currentPricePerItem < 0
+        "
+      >
+        + Add Item
+      </button>
+    </div>
+
+    <div class="col-12">
+      <h5>Selected Products</h5>
+      @if (purchaseItems.length > 0) {
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Price per Item</th>
+            <th>Total</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of purchaseItems; track item.productId) {
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.quantity * item.price }}</td>
+            <td>
+              <button
+                type="button"
+                (click)="removeProductFromList(item.productId)"
+                class="btn btn-danger btn-sm rounded-0"
+              >
+                Remove
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      } @else {
+      <p>No products selected yet.</p>
+      }
+      <hr />
+      <div class="d-flex justify-content-end">
+        <button
+          type="submit"
+          class="btn btn-success rounded-0 btn-sm"
+          [disabled]="purchaseItems.length === 0 || purchaseForm.invalid"
+        >
+          Save Purchase
+        </button>
+      </div>
+    </div>
+  </form>
+  } }
+</div>
