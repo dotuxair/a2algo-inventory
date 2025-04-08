@@ -1,0 +1,167 @@
+<div class="container mt-3">
+  <div class="d-flex justify-content-between">
+    <h5 style="font-family: 'Trebuchet MS'">Sales Tracking</h5>
+
+    @if(viewDetail){
+    <button class="btn btn-primary rounded-0 btn-sm" (click)="onGoBack()">
+      View Sales
+    </button>
+    } @else{ @if(addSale){
+    <button
+      class="btn btn-success rounded-0 btn-sm"
+      (click)="onConfirmAddSales()"
+      [disabled]="saleProducts.length === 0 || !customerName"
+    >
+      Confirm Add Sales
+    </button>
+    } @else {
+    <button
+      class="btn btn-primary rounded-0 btn-sm"
+      (click)="onAddSalesClick()"
+    >
+      Add Sales
+    </button>
+    } }
+  </div>
+  <hr />
+  @if(viewDetail){
+  <div class="d-flex justify-content-between">
+    <span>Customer Name : {{ saleDetailById?.customerName }}</span>
+    <span>Date : {{ saleDetailById?.date }}</span>
+    <span>Amount :{{ saleDetailById?.amount }} </span>
+  </div>
+<br>
+  <table class="table table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of productDetailBySaleId; track item.name) {
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.quantity * item.price }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  }@else { @if(addSale){
+  <form class="row" (ngSubmit)="onAddSales()">
+    <div class="mb-2 col-md-3">
+      <label class="form-label" for="name">Customer Name</label>
+      <input
+        id="name"
+        class="form-control rounded-0"
+        placeholder="e.g Uxair"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="customerName"
+      />
+    </div>
+    <div class="mb-3 col-md-3">
+      <label for="product" class="form-label">Products</label>
+      <select
+        id="product"
+        class="form-select rounded-0"
+        [(ngModel)]="selectedProductId"
+        [ngModelOptions]="{ standalone: true }"
+      >
+        <option [value]="null" disabled selected>Select Product</option>
+        @for(product of products;track product.id){
+        <option [value]="product.id">
+          {{ `${product.name} - Stock: ${product.quantity}` }}
+        </option>
+        }
+      </select>
+    </div>
+
+    <div class="mb-2 col-md-2">
+      <label class="form-label" for="stock">Quantity</label>
+      <input
+        id="stock"
+        type="number"
+        class="form-control rounded-0"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="quantity"
+        min="1"
+      />
+    </div>
+    <div class="mb-2 col-md-4 d-flex align-items-end justify-content-end">
+      <div>
+        <button type="submit" class="btn btn-primary rounded-0 mt-2">
+          Add Item
+        </button>
+      </div>
+    </div>
+  </form>
+  <hr />
+
+  @if (saleProducts.length > 0) {
+  <h5>Sale Items:</h5>
+  <table class="table table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of saleProducts; track item.productId) {
+      <tr>
+        <td>{{ getProductName(item.productId) }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm rounded-0"
+            (click)="removeSaleProduct(item.productId)"
+          >
+            Remove
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  } @else {
+  <p>No items added to the sale yet.</p>
+  } } @else {
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Customer Name</th>
+          <th>Sale Date</th>
+          <th>Total Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (sale of sales; track sale.id ) {
+        <tr>
+          <td>{{ sale.customerName }}</td>
+          <td>{{ sale.saleDate | date : "medium" }}</td>
+          <td>Rs :- {{ sale.totalAmount }}</td>
+          <td>
+            <button
+              type="button"
+              (click)="viewSaleProducts(sale.id)"
+              class="btn btn-primary btn-sm rounded-0"
+            >
+              View Detail
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  } }
+</div>
