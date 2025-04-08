@@ -27,7 +27,7 @@
   @if(viewDetail){
   <div class="d-flex justify-content-between">
     <span>Customer Name : {{ saleDetailById?.customerName }}</span>
-    <span>Date : {{ saleDetailById?.date }}</span>
+    <span>Date : {{ saleDetailById?.date | date:'medium' }}</span>
     <span>Amount :{{ saleDetailById?.amount }} </span>
   </div>
 <br>
