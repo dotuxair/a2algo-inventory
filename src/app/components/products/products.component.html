@@ -1,0 +1,142 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 style="font-family: 'Trebuchet MS'; font-weight: 600">Products</h3>
+    <button
+      class="btn btn-primary rounded-0 btn-sm"
+      (click)="onProductAddClick()"
+    >
+      Add Product
+    </button>
+  </div>
+@if(showForm){
+
+  <form
+    [formGroup]="productForm"
+    (ngSubmit)="isEditing ? onUpdateProduct() : onAddProduct()"
+  >
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <input
+          type="text"
+          formControlName="name"
+          class="form-control"
+          placeholder="Product Name"
+        />
+        @if(productForm.get('name')?.invalid && productForm.get('name')?.touched){
+
+        <small
+          class="text-danger"
+        >
+          Name is required.
+        </small>
+      }
+
+      </div>
+      <div class="col-md-3">
+        <input
+          type="text"
+          formControlName="description"
+          class="form-control"
+          placeholder="Description"
+        />
+        @if( productForm.get('description')?.invalid &&
+        productForm.get('description')?.touched){
+        <small class="text-danger">
+          Description is required.
+        </small>
+        }
+      </div>
+      <div class="col-md-2">
+        <input
+          type="number"
+          formControlName="price"
+          class="form-control"
+          placeholder="Price"
+        />
+        @if(productForm.get('price')?.invalid &&
+        productForm.get('price')?.touched){
+
+        <small class="text-danger">
+          Price must be greater than or equal to 0.
+        </small>
+        }
+      </div>
+      <div class="col-md-2">
+        <input
+          type="number"
+          formControlName="quantity"
+          class="form-control"
+          placeholder="Quantity"
+        />
+
+        @if(productForm.get('quantity')?.invalid &&
+        productForm.get('quantity')?.touched){
+
+        <small class="text-danger">
+          Quantity must be greater than or equal to 0.
+        </small>
+        }
+      </div>
+      <div class="col-md-2 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary btn-block rounded-0 mx-2">
+          {{ isEditing ? "Update" : "Add" }}
+        </button>
+
+        @if(isEditing){
+        <button
+          type="button"
+          class="btn btn-secondary btn-block rounded-0"
+          (click)="onCancelEdit()"
+        >
+          Cancel
+        </button>
+        }
+      </div>
+    </div>
+  </form>
+}
+
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products; track product.id) {
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.price.toFixed(2) }}</td>
+          <td class="text-center">
+            <button
+              class="btn btn-sm btn-success me-2 rounded-0"
+              (click)="onEditProduct(product.id)"
+            >
+              Edit
+            </button>
+            <button
+              class="btn btn-sm btn-danger rounded-0"
+              (click)="onDeleteProduct(product.id)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="6" class="text-center text-muted">
+            No products available.
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
